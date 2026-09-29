@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POLICE ASSISTENT AI</title>
+    <style>
+        :root {
+            --bg: #07111f;
+            --panel: #0d1b2d;
+            --panel-2: #11243a;
+            --line: rgba(255,255,255,.09);
+            --text: #edf5ff;
+            --muted: #8fa4bb;
+            --accent: #4da3ff;
+            --accent-2: #8bc7ff;
+            --user: #153c62;
+            --danger: #ff6b6b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(77,163,255,.14), transparent 28%),
+                radial-gradient(circle at 85% 80%, rgba(139,199,255,.08), transparent 30%),
+                var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .app {
+            width: min(1080px, 100%);
+            height: min(760px, 94vh);
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 26px;
+            background: rgba(13,27,45,.86);
+            box-shadow: 0 28px 90px rgba(0,0,0,.42);
+            backdrop-filter: blur(18px);
+        }
+
+        aside {
+            padding: 28px 22px;
+            border-right: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(17,36,58,.9), rgba(8,20,34,.75));
+        }
+
+        .badge {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(145deg, var(--accent), #2369ad);
+            box-shadow: 0 12px 30px rgba(77,163,255,.24);
+            font-size: 27px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin: 0 0 8px;
+            letter-spacing: .4px;
+        }
+
+        .tagline {
+            color: var(--muted);
+            line-height: 1.55;
+            font-size: 13px;
+        }
+
+        .scope {
+            margin-top: 30px;
+            padding: 16px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: rgba(255,255,255,.025);
+        }
+
+        .scope strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 9px;
+            color: var(--accent-2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .scope span {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.65;
+        }
+
+        main {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            min-height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #53d88a;
+            box-shadow: 0 0 14px #53d88a;
+        }
+
+        #chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            max-width: 78%;
+            margin-bottom: 20px;
+            animation: rise .22s ease;
+        }
+
+        .message.ai { margin-right: auto; }
+        .message.user { margin-left: auto; }
+
+        .label {
+            font-size: 10px;
+            color: var(--muted);
+            margin: 0 0 7px 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bubble {
+            padding: 14px 16px;
+            border-radius: 17px;
+            line-height: 1.6;
+            font-size: 14px;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            border: 1px solid var(--line);
+        }
+
+        .ai .bubble {
+            background: rgba(255,255,255,.035);
+            border-top-left-radius: 6px;
+        }
+
+        .user .bubble {
+            background: var(--user);
+            border-color: rgba(77,163,255,.22);
+            border-top-right-radius: 6px;
+        }
+
+        .composer {
+            padding: 18px 22px 22px;
+            border-top: 1px solid var(--line);
+            background: rgba(5,15,27,.55);
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            padding: 9px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: rgba(255,255,255,.035);
+        }
+
+        textarea {
+            flex: 1;
+            resize: none;
+            max-height: 130px;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--text);
+            padding: 9px 8px;
+            font: inherit;
+            line-height: 1.45;
+        }
+
+        textarea::placeholder { color: #688099; }
+
+        button {
+            border: 0;
+            border-radius: 13px;
+            padding: 12px 17px;
+            cursor: pointer;
+            color: #06111d;
+            background: var(--accent);
+            font-weight: 800;
+            transition: transform .15s ease, opacity .15s ease;
+        }
+
+        button:hover { transform: translateY(-1px); }
+        button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+        .hint {
+            color: #657d95;
+            font-size: 10px;
+            text-align: center;
+            margin-top: 9px;
+        }
+
+        .typing {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .typing i {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent-2);
+            animation: pulse 1s infinite;
+        }
+
+        .typing i:nth-child(2) { animation-delay: .15s; }
+        .typing i:nth-child(3) { animation-delay: .3s; }
+
+        @keyframes pulse { 50% { opacity: .25; transform: translateY(-2px); } }
+        @keyframes rise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+
+        @media (max-width: 760px) {
+            body { padding: 0; }
+            .app {
+                height: 100vh;
+                border-radius: 0;
+                grid-template-columns: 1fr;
+            }
+            aside { display: none; }
+            .message { max-width: 90%; }
+            #chat { padding: 20px 16px; }
+            header { padding: 16px; }
+            .composer { padding: 12px 14px 15px; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside>
+        <div class="badge">✦</div>
+        <h1>POLICE ASSISTENT AI</h1>
+        <div class="tagline">
+            Your focused study companion for policing, criminal justice and law-enforcement education.
+        </div>
+
+        <div class="scope">
+            <strong>Study scope</strong>
+            <span>
+                Police science · Criminology · Criminal justice · Investigation theory ·
+                Forensic basics · Police administration · Community policing · Ethics
+            </span>
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <div>
+                <strong>Study Desk</strong>
+            </div>
+            <div class="status"><span class="dot"></span> AI online</div>
+        </header>
+
+        <section id="chat" aria-live="polite">
+            <div class="message ai">
+                <div class="label">Police Assistent AI</div>
+                <div class="bubble">Hello! I’m POLICE ASSISTENT AI. Ask me a study question about policing, criminal justice, criminology, law enforcement, or related subjects.</div>
+            </div>
+        </section>
+
+        <div class="composer">
+            <form id="chatForm">
+                <textarea id="message" rows="1" placeholder="Ask a police-study question..." required></textarea>
+                <button id="sendBtn" type="submit">Send</button>
+            </form>
+            <div class="hint">Educational use only · Laws and procedures vary by jurisdiction</div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("message");
+    const chat = document.getElementById("chat");
+    const sendBtn = document.getElementById("sendBtn");
+
+    function addMessage(role, text) {
+        const wrapper = document.createElement("div");
+        wrapper.className = `message ${role}`;
+
+        const label = document.createElement("div");
+        label.className = "label";
+        label.textContent = role === "user" ? "You" : "Police Assistent AI";
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = text;
+
+        wrapper.append(label, bubble);
+        chat.appendChild(wrapper);
+        chat.scrollTop = chat.scrollHeight;
+        return wrapper;
+    }
+
+    function addTyping() {
+        const wrapper = document.createElement("div");
+        wrapper.className = "message ai";
+        wrapper.id = "typing";
+
+        const label = document.createElement("div");
+        label.className = "label";
+        label.textContent = "Police Assistent AI";
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+
+        wrapper.append(label, bubble);
+        chat.appendChild(wrapper);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    input.addEventListener("input", () => {
+        input.style.height = "auto";
+        input.style.height = Math.min(input.scrollHeight, 130) + "px";
+    });
+
+    input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            form.requestSubmit();
+        }
+    });
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const message = input.value.trim();
+        if (!message || sendBtn.disabled) return;
+
+        addMessage("user", message);
+        input.value = "";
+        input.style.height = "auto";
+        sendBtn.disabled = true;
+        addTyping();
+
+        try {
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({message})
+            });
+
+            const data = await response.json();
+            document.getElementById("typing")?.remove();
+
+            if (!response.ok) {
+                addMessage("ai", data.error || "Something went wrong.");
+            } else {
+                addMessage("ai", data.answer);
+            }
+        } catch {
+            document.getElementById("typing")?.remove();
+            addMessage("ai", "Unable to connect to the server. Please try again.");
+        } finally {
+            sendBtn.disabled = false;
+            input.focus();
+        }
+    });
+</script>
+</body>
+</html>
